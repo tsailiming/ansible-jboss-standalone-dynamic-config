@@ -37,7 +37,7 @@
   * 192.168.223.124 => change to your own ip
   * install mysql / maria db related packages
 
-    `sudo yum install mysql-python`
+    `sudo yum install MySQL-python`
 
      `sudo yum install mariadb-server mariadb-client`
 

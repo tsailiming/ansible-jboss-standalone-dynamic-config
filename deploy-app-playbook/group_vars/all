@@ -1,2 +1,3 @@
 nexus_repo_url: "http://192.168.223.130:8081/repository/demo"
+stage: "sit"
 

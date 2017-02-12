@@ -1,0 +1,14 @@
+---
+- name: Add webservers to group
+  add_host: 
+    name: "{{ item }}"
+    groups: webservers
+  with_items:
+    - "{{ webservers }}"
+
+- name: Add dbservers to group
+  add_host:
+    name: "{{ item }}"
+    groups: dbservers
+  with_items:
+    - "{{ dbservers }}"

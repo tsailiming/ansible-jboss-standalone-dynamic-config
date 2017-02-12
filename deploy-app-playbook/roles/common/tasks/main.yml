@@ -1,0 +1,42 @@
+---
+- block:
+    # tempfile modile only available in ansible 2.3
+    - name: Create temp directory to hold downloaded files
+      shell: mktemp -d 
+      register: tempdir    
+      delegate_to: 127.0.0.1  
+
+    - debug: msg="temp dir = {{ tempdir.stdout }}"
+      delegate_to: 127.0.0.1  
+
+    - set_fact: {'config': {'common_url': "{{ base_url }}/common.yml", 'stage_url': "{{ base_url }}/{{ stage }}.yml"}}
+      delegate_to: 127.0.0.1  
+    
+    - debug: msg="URL={{ item }}"
+      with_items:
+        - "{{ config.common_url }}"
+        - "{{ config.stage_url }}"
+      delegate_to: 127.0.0.1 
+
+    - name: Download config from Nexus
+      get_url:
+        url: "{{ item }}"
+        dest: "{{ tempdir.stdout }}"
+      with_items:
+        - "{{ config.common_url }}"
+        - "{{ config.stage_url }}"
+      delegate_to: 127.0.0.1 
+
+    - name: Load external config
+      include_vars: "{{ item }}"
+      with_items:
+        - "{{ tempdir.stdout }}/common.yml"
+        - "{{ tempdir.stdout }}/{{ stage }}.yml"
+      delegate_to: 127.0.0.1 
+        
+  #rescue:
+  
+  always:
+      - name: Clean up temp directory
+        file: path="{{ tempdir.stdout }}" state=absent
+        when: tempdir is defined

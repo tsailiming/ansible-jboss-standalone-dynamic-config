@@ -1,0 +1,1 @@
+base_url: "{{ nexus_repo_url}}/{{ application_id }}/{{ application_version }}/config"    

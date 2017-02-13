@@ -1,7 +1,7 @@
 # This playbook deploys the whole application stack in this site.
 
 
-- name: Dynamically load hosts
+- name: Dynamically load hosts inventory
   hosts: localhost
   connection: local
   gather_facts: no
@@ -13,7 +13,7 @@
     - common
     - setup-hosts
 
-- name: setup db
+- name: Setup DB
   hosts: dbservers
   #remote_user: virtuser
 
@@ -24,7 +24,7 @@
     - common
     - setup_db
 
-- name: configure and deploy the eap applications
+- name: Deploy EAP application
   hosts: webservers
   #remote_user: virtuser
   
@@ -33,6 +33,6 @@
 
   roles:
     - common
-    - jboss-standalone
+    - deploy-app
 
 

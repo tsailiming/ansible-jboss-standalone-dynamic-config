@@ -49,20 +49,27 @@
       service: name=firewalld state=stopped enabled=no
 
 
+- name: setup JBOSS EAP
+  hosts: webservers
 
-
-
-
-
-
-  
+  vars:
+    eap_file: jboss-eap-7.0.0.zip
     
-# - name: configure and deploy the eap applications
-#   hosts: webservers
-#   remote_user: virtuser
-#   #vars_files:
-#   #  - vars/application-config.yml
-#   roles:
-#     - jboss-standalone
+  vars_files:
+    - vars/application-config.yml
 
+  roles:
+    - common
+  
+  tasks:
+    - name: Install openjdk
+      yum: name=java-1.8.0-openjdk.x86_64 state=present
+
+    - name: Unzip JBOSS EAP
+      unarchive:
+        src: "{{ eap_file }}"
+        dest: /opt/
+
+    - name: Disable firewalld
+      service: name=firewalld state=stopped enabled=no
 

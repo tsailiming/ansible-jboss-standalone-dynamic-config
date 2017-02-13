@@ -15,61 +15,26 @@
 
 - name: setup db
   hosts: dbservers
-  #remote_user: virtuser
-
+  become: yes
+  
   vars_files:
     - vars/application-config.yml
 
   roles:
-    - common
-  
-  tasks:
-    - name: Install packages
-      yum: name={{ item }} state=present
-      with_items:
-        - MySQL-python
-        - mariadb-server 
-
-    - name: Start mariadb
-      service: name=mariadb state=started enabled=yes
-
-    - name: Create demodb
-      mysql_db:
-        name: demodb
-        state: present
-
-    - name: Create {{ db_user }} DB user
-      mysql_user:
-        name: "{{ db_user }}"
-        password: "{{ db_password }}"
-        priv: '*.*:ALL'
-        state: present
-
-    - name: Disable firewalld
-      service: name=firewalld state=stopped enabled=no
-
+    - { role: common, become: no }
+    - mariadb
 
 - name: setup JBOSS EAP
   hosts: webservers
+  become: yes
 
   vars:
     eap_file: jboss-eap-7.0.0.zip
+    jboss_user: jboss
     
   vars_files:
     - vars/application-config.yml
 
   roles:
-    - common
-  
-  tasks:
-    - name: Install openjdk
-      yum: name=java-1.8.0-openjdk.x86_64 state=present
-
-    - name: Unzip JBOSS EAP
-      unarchive:
-        src: "{{ eap_file }}"
-        dest: /opt/
-
-    - name: Disable firewalld
-      service: name=firewalld state=stopped enabled=no
-
+    - { role: common, become: no }
+    - jboss-standalone 

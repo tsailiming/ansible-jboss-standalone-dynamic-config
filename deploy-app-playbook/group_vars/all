@@ -3,3 +3,4 @@ stage: "sit"
 required_packages:
   - rsync
   - firewalld
+  - unzip

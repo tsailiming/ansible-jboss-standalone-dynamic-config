@@ -1,4 +1,9 @@
 ---
+- name: Install required packages
+  yum: name={{ item }} state=present
+  with_items: "{{ required_packages }}"
+  when: '"{{ inventory_hostname }}" != "localhost"'
+
 - block:
     # tempfile modile only available in ansible 2.3
     - name: Create temp directory to hold downloaded files

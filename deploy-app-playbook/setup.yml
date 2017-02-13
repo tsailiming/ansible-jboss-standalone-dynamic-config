@@ -30,7 +30,6 @@
 
   vars:
     eap_file: jboss-eap-7.0.0.zip
-    jboss_user: jboss
     
   vars_files:
     - vars/application-config.yml

@@ -1,5 +1,26 @@
 ---
 # setup db
+
+- name: Create demodb
+  mysql_db:
+    name: demodb
+    state: present
+    login_user: root
+
+- debug: msg="DB user={{ db_user }} password={{ db_password }}"
+
+- name: Create {{ db_user }} DB user
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: '*.*:ALL'
+    state: present
+    host: "{{ item }}"
+    login_user: root
+  with_items:
+    - "%"
+    - "localhost"
+
 - name: get DDL script
   get_url:
     url: "{{ nexus_repo_url }}/{{ application_id }}/{{ application_version }}/{{ ddl_file }}"

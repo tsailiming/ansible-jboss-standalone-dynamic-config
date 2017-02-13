@@ -20,15 +20,12 @@
   copy: src=jboss-as-standalone.sh dest=/etc/init.d/jboss mode=0755
 
 - name: Create jboss conf directory
-  file: path=/etc/jboss-as state=directory
+  file: path="{{ jboss_conf | dirname }}" state=directory
 
 - name: Copy the jboss conf file
   template:
     src: jboss-as.conf.tmpl
-    dest: /etc/jboss-as/jboss-as.conf
-
-- name: Enable JBoss to be started at boot
-  service: name=jboss enabled=yes state=started
+    dest: "{{ jboss_conf }}"
 
 - name: Disable firewalld
   service: name=firewalld state=stopped enabled=no

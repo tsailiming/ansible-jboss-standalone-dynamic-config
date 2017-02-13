@@ -5,7 +5,7 @@
   file:
     path: "{{ jboss_eap_home }}/{{ application_id }}"
     state: directory
-
+    
 # standalone*.xml excluded
 - name: Copy contents over from template directory
   synchronize:

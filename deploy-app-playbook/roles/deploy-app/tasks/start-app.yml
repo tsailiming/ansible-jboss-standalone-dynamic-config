@@ -1,0 +1,36 @@
+---
+# - name: get prop
+#   get_url:
+#     url: "{{ nexus_repo_url }}/{{ application_id }}/{{ application_version }}/{{ startup_prop }}"
+#     dest: "{{jboss_eap_home}}/{{ application_id }}/configuration/{{ startup_prop }}"
+
+- name: Set property file
+  template:
+    src: "{{ startup_prop }}.tmpl"
+    dest: "{{jboss_eap_home}}/{{ application_id }}/configuration/{{ startup_prop }}"
+
+- name: Add java opts
+  lineinfile:
+    dest: "{{ jboss_conf }}"
+    regexp: '^JAVA_OPTS='
+    line: "JAVA_OPTS='-Djboss.server.base.dir={{ jboss_eap_home }}/store -b 0.0.0.0 -P {{jboss_eap_home}}/{{ application_id }}/configuration/{{startup_prop }}'"
+
+- name: "Set correct file permission"
+  file: 
+    path: "{{jboss_eap_home}}/{{ application_id }}"
+    owner: "{{ jboss_user }}"
+    group: "{{ jboss_user }}"
+    state: directory
+    recurse: yes
+
+- name: Enable JBoss to be started at boot
+  systemd: 
+    name: jboss 
+    enabled: yes 
+    state: restarted 
+    daemon_reload: yes
+
+# - name: start app
+#   shell : "{{jboss_eap_home}}/bin/standalone.sh -Djboss.server.base.dir=/opt/jboss-eap-7.0/store -b 0.0.0.0 -P {{jboss_eap_home}}/{{ application_id }}/configuration/{{startup_prop  }} &"
+#   async: 45
+#   poll: 5

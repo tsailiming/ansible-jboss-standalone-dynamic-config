@@ -21,18 +21,19 @@
     - vars/application-config.yml
 
   roles:
-    - common
+    - { role: common, become: no }
     - setup_db
 
 - name: Deploy EAP application
   hosts: webservers
+  become: yes
   #remote_user: virtuser
   
   vars_files:
     - vars/application-config.yml
 
   roles:
-    - common
+    - { role: common, become: no }
     - deploy-app
 
 

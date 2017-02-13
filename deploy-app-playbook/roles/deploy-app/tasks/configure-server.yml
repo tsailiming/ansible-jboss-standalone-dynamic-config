@@ -8,6 +8,7 @@
 - name: Load module files into server
   debug:
     msg: "loading modules...."
+
 - unarchive:
     src: "{{ nexus_repo_url  }}/{{ application_id }}/{{ application_version }}/{{ module_file }}" 
     dest: "{{ jboss_eap_home }}"

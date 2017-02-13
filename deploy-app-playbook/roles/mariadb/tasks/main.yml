@@ -8,17 +8,5 @@
 - name: Start mariadb
   service: name=mariadb state=started enabled=yes
 
-- name: Create demodb
-  mysql_db:
-    name: demodb
-    state: present
-
-- name: Create {{ db_user }} DB user
-  mysql_user:
-    name: "{{ db_user }}"
-    password: "{{ db_password }}"
-    priv: '*.*:ALL'
-    state: present
-
 - name: Disable firewalld
   service: name=firewalld state=stopped enabled=no

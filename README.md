@@ -22,7 +22,7 @@ Pass the following extra-vars to ansible-playbook:
 
 * `-e stage=sit`
 * `-e nexus_repo_url=http://<NEXUS IP>:8081/repository/demo`
-* `- u <SSH_USER`
+* `-u <SSH_USER`
 
 ```
 $ ansible-playbook -i hosts -e stage=sit \

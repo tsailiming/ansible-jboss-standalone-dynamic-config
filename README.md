@@ -24,12 +24,12 @@ Pass the following extra-vars to ansible-playbook:
 * `-e nexus_repo_url=http://<NEXUS IP>:8081/repository/demo`
 * `-e u <SSH_USER`
 
-    
-    $ ansible-playbook -i hosts -e stage=sit \
-    -e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo \
-    -u <SSH_USER> setup.yml
+```
+$ ansible-playbook -i hosts -e stage=sit \
+-e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo \
+-u <SSH_USER> setup.yml
+```
  
-  
 ##  Install the sample app
 
 Run `site.yml` to deploy the EAP Application and setup the database.
@@ -38,7 +38,8 @@ Run `site.yml` to deploy the EAP Application and setup the database.
 * `-e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo`
 * `-e u <SSH_USER>`
 
-
-    $ ansible-playbook -i hosts -e stage=sit \
-    -e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo \
-    -u <SSH_USER> site.yml
+```
+$ ansible-playbook -i hosts -e stage=sit \
+-e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo \
+-u <SSH_USER> site.yml
+```

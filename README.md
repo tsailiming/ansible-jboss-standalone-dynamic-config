@@ -1,70 +1,44 @@
-# Set up doc for Project D ansible demo
-
-## 1. Server Nodes
-* #### nexus repo
-  * a Nexus repo already installed at `192.168.223.130` => change to your own ip
-  * `/opt2/nexus/nexus-3.2.0-01/bin/nexus start`
-  * `/opt2/nexus/nexus-3.2.0-01/bin/nexus stop`
-  * setup a new raw repo call `demo`
-  * http://192.168.223.123:8081
-  * Commands to update artifacts:
-        `curl --fail -u admin:admin123 --upload-file ./modules.zip  'http://192.168.223.130:8081/repository/demo/store/1.0.0/modules.zip'`
-
-        `curl --fail -u admin:admin123 --upload-file ./standalone.xml  'http://192.168.223.130:8081/repository/demo/store/1.0.0/standalone.xml'`
-
-        `curl --fail -u admin:admin123 --upload-file ./store.war  'http://192.168.223.130:8081/repository/demo/store/1.0.0/store.war'`
-
-        `curl --fail -u admin:admin123 --upload-file ./startup.properties  'http://192.168.223.130:8081/repository/demo/store/1.0.0/startup.properties'`
-
-  * turn off firewall
-
-* #### webserver node
-  * 192.168.223.123 => change to your own ip
-  * sudo unzip jboss-eap-7.0.0.zip -d /opt/
-  * sudo chown -hR virtuser:virtuser /opt/jboss-eap-7.0/
-  * /opt/jboss-eap-7.0/bin/jboss-cli.sh "patch apply /home/virtuser/jboss-eap-7.0.4-patch.zip"
-  * Install Java
-
-    `sudo yum install java`
-
-    * check yum.repo.d , if have installation issues, some repo may have been turned off
-  * Install utilities
-
-    `sudo install zip unzip `
-  * turn off firewall    
-
-* #### database node
-  * 192.168.223.124 => change to your own ip
-  * install mysql / maria db related packages
-
-    `sudo yum install MySQL-python`
-
-     `sudo yum install mariadb-server mariadb-client`
-
-     `sudo mysql_secure_installation`         
-
-    * check yum.repo.d , if have installation issues, some repo may have been turned off
-  * Install utilities
-
-      `sudo install zip unzip `
-  * `sudo systemctl start mariadb`
-  * turn off firewall
-
-## 2. Software Artifacts
-
-* #### git repo
-
-  * `https://github.com/wohshon/ansible-jboss-standalone`
-  * `/deploy-app-playbook` - playbook
-  * `repo_artifacts` - stuffs to be hosted on repo
+# Set up doc for Project D Ansible demo
 
 
-## 3. Running the playbook
+## Requirements
+* Nexus Repository http://download.sonatype.com/nexus/3/latest-unix.tar.gz
+* Download `jboss-eap-7.0.0.zip` under `deploy-app-playbook/roles/jboss-standalone/files/`
+* 1 or 2 more RHEL/CentOS VM with a ssh account with sudo privelege. 
 
-* #### running the playbook
+## Nexus Repository
 
-  * check through the config variables in `group_vars` and `vars`
-  * update hosts file with your own ip address
-  * `ansible-playbook -i hosts site.yml`
-`
+The Nexus repository will host the application, config files and the IPs of the VMs. 
 
+  * Create a new raw(hosted) reciepe Nexus repository called 'demo'. (https://books.sonatype.com/nexus-book/reference3/raw.html#raw-hosted) 
+  * Edit `repo_artifacts/config/sit.yml` to add VM IPs
+  * Edit `bin/upload.sh` for the NEXUS Host IP and upload the artifacts by running `bin/upload-repo.sh`.
+
+## Setup the VMs
+
+Run `setup.yml` to install the necessary packages on the VM. This will install JBOSS EAP and MariaDB.
+
+Pass the following extra-vars to ansible-playbook:
+
+* `-e stage=sit`
+* `-e nexus_repo_url=http://<NEXUS IP>:8081/repository/demo`
+* `-e u <SSH_USER`
+
+    
+    $ ansible-playbook -i hosts -e stage=sit \
+    -e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo \
+    -u <SSH_USER> setup.yml
+ 
+  
+##  Install the sample app
+
+Run `site.yml` to deploy the EAP Application and setup the database.
+
+* `-e stage=sit`
+* `-e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo`
+* `-e u <SSH_USER>`
+
+
+    $ ansible-playbook -i hosts -e stage=sit \
+    -e nexus_repo_url=http://<NEXUS_IP>:8081/repository/demo \
+    -u <SSH_USER> site.yml

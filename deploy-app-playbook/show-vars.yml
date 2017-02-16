@@ -1,0 +1,12 @@
+- name: Show default variables
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  
+
+  tasks:
+    - command: 'cat vars/application-config.yml'
+      register: result
+
+    - debug: msg="{{ result.stdout }}"
+    

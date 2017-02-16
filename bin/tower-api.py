@@ -15,7 +15,8 @@ NEXUS_REPO_URL='http://54.169.3.13:8081/repository/demo'
 STAGE='sit'
 
 URL='http://' + TOWER_IP + '/api/v1/job_templates/' + JOB_TEMPLATE_ID + '/launch/'
-payload = dict(nexus_repo_url=NEXUS_REPO_URL, stage=STAGE)
+payload = {'extra_vars': 'nexus_repo_url: '+ NEXUS_REPO_URL + ' \nstage: ' + STAGE}
+
 headers = {'Content-type': 'application/json'}
 r = requests.post(URL, 
                     data=json.dumps(payload),
@@ -29,7 +30,7 @@ while True:
 
     r = requests.get(job_url,
                         auth=HTTPBasicAuth(USERNAME, PASSWORD)).json()
-    
+
     status = r['status']
     print 'Job Status: ' + status
 

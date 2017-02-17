@@ -1,0 +1,74 @@
+---
+- set_fact: 
+    role_order: "{{ role_order|default([]) + \
+                  [{ 'name': item.name, \
+                     'pre_script': item.pre_script if item.pre_script is defined else None, \
+                     'post_script': item.post_script if item.post_script is defined else None, \                     
+                     'run_pre_script': True if item.pre_script is defined else False, \
+                     'run_post_script': True if item.post_script is defined else False, \
+                     'run_role': inventory_hostname in groups[item.name]} ] }}"
+  with_items: "{{ module_order }}"
+      
+- block:
+    # tempfile modile only available in ansible 2.3
+    - name: Create temp directory to hold downloaded files
+      shell: mktemp -d 
+      register: tempdir    
+      delegate_to: 127.0.0.1  
+
+    - debug: msg="temp dir = {{ tempdir.stdout }}"
+      delegate_to: 127.0.0.1  
+
+    - name: Create temp directory to hold downloaded files
+      shell: mktemp -d 
+      register: script_tempdir    
+
+    - name: Download pre scripts
+      get_url:
+        url: "{{app_script_url}}/{{ item.pre_script }}"
+        dest: "{{ script_tempdir.stdout }}"
+      with_items: "{{ module_order }}"
+      when: item.pre_script is defined
+
+    - name: Download post scripts
+      get_url:
+        url: "{{app_script_url}}/{{ item.post_script }}"
+        dest: "{{ script_tempdir.stdout }}"
+      with_items: "{{ module_order }}"
+      when:  item.post_script is defined
+
+    - find:
+        paths: "{{ script_tempdir.stdout }}"
+      register: scripts
+    
+    - name: Set file permission  
+      file:
+        path: "{{ item.path }}"
+        mode: 0755
+      with_items: "{{ scripts.files }}"
+
+    - debug: msg="Role order = {{ role_order }}"
+
+    - template:
+        src: insert-roles.yml
+        dest: "{{ tempdir.stdout }}/insert-roles.{{inventory_hostname}}.yml"
+      delegate_to: 127.0.0.1
+
+    - include: "{{ tempdir.stdout }}/insert-roles.{{inventory_hostname}}.yml"
+      static: no
+
+  #rescue:
+  
+  always:
+      - name: Clean up temp directory
+        file: path="{{ tempdir.stdout }}" state=absent
+        when: tempdir is defined
+        delegate_to: 127.0.0.1
+
+      - name: Clean up temp directory
+        file: path="{{ script_tempdir.stdout }}" state=absent
+        when: script_tempdir is defined
+
+
+
+    

@@ -1,4 +1,6 @@
 nexus_repo_url: "http://192.168.223.130:8081/repository/demo"
+app_script_url: "{{ nexus_repo_url}}/{{ application_id }}/{{ application_version }}/scripts"    
+app_config_url: "{{ nexus_repo_url}}/{{ application_id }}/{{ application_version }}/config"    
 stage: "sit"
 required_packages:
   - rsync

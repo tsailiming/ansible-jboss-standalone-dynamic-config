@@ -5,6 +5,11 @@ load_module: true
 module_file: modules.zip
 load_ddl: true
 ddl_file: import.sql
+db_hostname: 192.168.56.101
 db_user: demouser
 db_password: this.is.a.different.password # THIS IS DIFFERENT
 startup_prop: startup.properties
+
+module_order:
+  - { name: 'setup_db', hostnames: ['192.168.56.101']}
+  - { name: 'deploy-app', hostnames: ['192.168.56.101']}

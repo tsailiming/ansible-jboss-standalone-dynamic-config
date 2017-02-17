@@ -1,8 +1,14 @@
 ---
-webservers:
-  #- 192.168.56.101
-  #- 52.221.231.32 # nexus 
-  - 54.169.236.33
+# webservers:
+#   - 192.168.56.101
+#   #- 52.221.231.32 # nexus 
+#   #- 54.169.236.33
 
-dbservers:
-  - 54.169.56.50
+# dbservers:
+#   - 192.168.56.102
+#    #- 54.169.56.50
+db_hostname: 192.168.56.101
+
+module_order:
+  - { name: 'setup_db', hostnames: ['192.168.56.101'], pre_script: 'db_pre.sh', post_script: 'db_post.sh'}
+  - { name: 'deploy-app', hostnames: ['192.168.56.101'], post_script: 'app_post.sh'}

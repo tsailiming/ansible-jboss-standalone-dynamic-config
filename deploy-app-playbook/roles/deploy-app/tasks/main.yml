@@ -1,4 +1,7 @@
 ---
 - include: deploy-app.yml
+  become: yes
 - include: configure-server.yml
+  become: yes
 - include: start-app.yml
+  become: yes

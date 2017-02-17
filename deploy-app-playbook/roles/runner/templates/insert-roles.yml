@@ -1,0 +1,18 @@
+{% for item in role_order %}
+
+- name: Running PRE script {{ item.pre_script }}
+  command: "{{ script_tempdir.stdout }}/{{ item.pre_script }}"
+  when: {{ item.run_role }} and {{ item.run_pre_script }}
+
+- name: Including Role {{ item.name }}
+  include_role:
+    name: {{ item.name }}
+  when: {{ item.run_role }}
+
+- name: Running POST script {{ item.post_script }}
+  command: "{{ script_tempdir.stdout }}/{{ item.post_script }}"
+  when: {{ item.run_role }} and {{ item.run_post_script }}
+
+###################
+
+{% endfor %}

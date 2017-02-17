@@ -1,0 +1,22 @@
+#This playbook deploys the whole application stack in this site.
+
+- name: Dynamically load hosts inventory
+  hosts: localhost
+  connection: local
+  gather_facts: no
+   
+  vars_files:
+    - vars/application-config.yml
+    
+  roles:
+    - common
+    - setup-hosts
+
+- name: Run play
+  hosts: all
+  vars_files:
+    - vars/application-config.yml
+  
+  roles:
+    - { role: common, become: no }
+    - { role: runner, become: no }

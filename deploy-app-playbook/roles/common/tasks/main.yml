@@ -15,7 +15,7 @@
     - debug: msg="temp dir = {{ tempdir.stdout }}"
       delegate_to: 127.0.0.1  
 
-    - set_fact: {'config': {'common_url': "{{ base_url }}/common.yml", 'stage_url': "{{ base_url }}/{{ stage }}.yml"}}
+    - set_fact: {'config': {'common_url': "{{ app_config_url }}/common.yml", 'stage_url': "{{ app_config_url }}/{{ stage }}.yml"}}
       delegate_to: 127.0.0.1  
     
     - debug: msg="URL={{ item }}"

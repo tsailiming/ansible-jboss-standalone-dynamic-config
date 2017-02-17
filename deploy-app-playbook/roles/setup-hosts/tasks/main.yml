@@ -1,14 +1,22 @@
 ---
-- name: Add webservers to group
-  add_host: 
-    name: "{{ item }}"
-    groups: webservers
-  with_items:
-    - "{{ webservers }}"
+# - name: Add webservers to group
+#   add_host: 
+#     name: "{{ item }}"
+#     groups: webservers
+#   with_items:
+#     - "{{ webservers }}"
 
-- name: Add dbservers to group
-  add_host:
-    name: "{{ item }}"
-    groups: dbservers
-  with_items:
-    - "{{ dbservers }}"
+# - name: Add dbservers to group
+#   add_host:
+#     name: "{{ item }}"
+#     groups: dbservers
+#   with_items:
+#     - "{{ dbservers }}"
+
+- name: Add host to groups
+  add_host: 
+    name: "{{ item.1 }}"
+    groups: "{{ item.0.name }}"
+  with_subelements:
+        - "{{ module_order }}"
+        - hostnames

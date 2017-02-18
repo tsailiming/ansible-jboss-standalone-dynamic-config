@@ -46,3 +46,4 @@
       - name: Clean up temp directory
         file: path="{{ tempdir.stdout }}" state=absent
         when: tempdir is defined
+        delegate_to: 127.0.0.1 

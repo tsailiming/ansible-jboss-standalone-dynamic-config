@@ -19,5 +19,5 @@
   
   roles:
     - { role: common, become: no }
-    - { role: geerlingguy.firewall, become: no}
+    - { role: ../roles/geerlingguy.firewall, become: no}
     - { role: runner, become: no }

@@ -1,3 +1,4 @@
 #!/bin/sh
 
-echo "I'm db pre script"
+date >> /tmp/out
+echo "I'm db pre script" >> /tmp/out

@@ -1,3 +1,4 @@
 #!/bin/sh
 
-echo "I'm db post script"
+date >> /tmp/out
+echo "I'm db post script" >> /tmp/out

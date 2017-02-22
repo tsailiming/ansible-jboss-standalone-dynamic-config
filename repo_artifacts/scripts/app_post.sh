@@ -1,3 +1,4 @@
 #!/bin/sh
 
-echo "I'm app post script"
+date >> /tmp/out
+echo "I'm app post script" >> /tmp/out

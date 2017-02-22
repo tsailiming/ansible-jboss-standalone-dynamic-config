@@ -19,44 +19,16 @@
     - debug: msg="temp dir = {{ tempdir.stdout }}"
       delegate_to: 127.0.0.1  
 
-    - name: Create temp directory to hold downloaded files
-      shell: mktemp -d 
-      register: script_tempdir    
-
-    - name: Download pre scripts
-      get_url:
-        url: "{{app_script_url}}/{{ item.pre_script }}"
-        dest: "{{ script_tempdir.stdout }}"
-      with_items: "{{ module_order }}"
-      when: item.pre_script is defined
-
-    - name: Download post scripts
-      get_url:
-        url: "{{app_script_url}}/{{ item.post_script }}"
-        dest: "{{ script_tempdir.stdout }}"
-      with_items: "{{ module_order }}"
-      when:  item.post_script is defined
-
-    - find:
-        paths: "{{ script_tempdir.stdout }}"
-      register: scripts
-    
-    - name: Set file permission  
-      file:
-        path: "{{ item.path }}"
-        mode: 0755
-      with_items: "{{ scripts.files }}"
-
     - debug: msg="Role order = {{ role_order }}"
 
     - template:
         src: insert-roles.yml
-        dest: "{{ tempdir.stdout }}/insert-roles.{{inventory_hostname}}.yml"
+        dest: "{{ tempdir.stdout }}/insert-roles.yml"
       delegate_to: 127.0.0.1
 
-    - include: "{{ tempdir.stdout }}/insert-roles.{{inventory_hostname}}.yml"
+    - include: "{{ tempdir.stdout }}/insert-roles.yml"
       static: no
-
+    
   #rescue:
   
   always:
@@ -64,10 +36,6 @@
         file: path="{{ tempdir.stdout }}" state=absent
         when: tempdir is defined
         delegate_to: 127.0.0.1
-
-      - name: Clean up temp directory
-        file: path="{{ script_tempdir.stdout }}" state=absent
-        when: script_tempdir is defined
 
 
 

@@ -1,0 +1,12 @@
+--- 
+instances: 
+{% for item in web.instances %}
+    - { id: {{ item.id }}, public_dns_name: {{ item.public_dns_name }}, public_ip: {{ item.public_ip}}, tags: {{ item.tags }} }
+{% endfor %}
+
+{% for item in db.instances %}
+    - { id: {{ item.id }}, public_dns_name: {{ item.public_dns_name }}, public_ip: {{ item.public_ip}}, tags: {{ item.tags }} }   
+{% endfor %}
+
+rds:
+    - { hostname: {{ rds.instance.endpoint }}, db_name: {{ rds_db_name }}, db_username: {{ rds_db_username }}, db_password: {{ rds_db_password }} }

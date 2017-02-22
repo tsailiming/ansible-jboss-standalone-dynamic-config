@@ -1,0 +1,33 @@
+---
+ # Variables for VPC
+ vpc_name: demo-ansible-eap-vpc
+ vpc_region: ap-southeast-1
+ vpc_cidr_block: 172.25.0.0/16
+ public_cidr_1: 172.25.10.0/24
+ public_cidr_2: 172.25.11.0/24
+ public_az_1: "{{ vpc_region }}a"
+ public_az_2: "{{ vpc_region }}b"
+
+ # Please don't change the variables below, until you know what you are doing
+ #
+ # Subnets Defination for VPC
+ vpc_subnets:
+   - cidr: "{{ public_cidr_1 }}" 
+     az: "{{ public_az_1 }}"
+     resource_tags: { "Name":"{{ vpc_name }}-{{ public_az_1 }}-public-subnet-1" }
+   
+   - cidr: "{{ public_cidr_2 }}" 
+     az: "{{ public_az_2 }}"
+     resource_tags: { "Name":"{{ vpc_name }}-{{ public_az_2 }}-public-subnet-2" }
+
+
+ # Route table(s) for Subnets inside the VPC
+ #
+ # Routing Table for Public Subnet
+ public_subnet_rt:
+   - subnets:
+       - "{{ public_cidr_1 }}"
+       - "{{ public_cidr_2 }}"
+     routes:
+       - dest: 0.0.0.0/0
+         gw: igw

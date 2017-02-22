@@ -1,0 +1,5 @@
+---
+ application: my-app
+ server_role: webserver
+ db_role: dbserver
+ rds_role: rds

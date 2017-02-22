@@ -1,0 +1,58 @@
+---
+ - name: DBServer | Create DB Security Group
+   local_action:
+     module: ec2_group
+     name: "{{ item.sg_name }}"
+     description: "{{ item.sg_description }}"
+     region: "{{ vpc_region }}" # Change the AWS region here
+     vpc_id: "{{ vpc.vpc_id }}" # vpc is the resgister name, you can also set it manually
+     state: present
+     rules: "{{ item.sg_rules }}"
+   with_items: "{{ db_security_groups }}"
+   register: db_sg
+
+ - name: DBServer | Tag the DB Security Group with a name
+   local_action:
+     module: ec2_tag
+     resource: "{{ item.group_id}}"
+     region: "{{ vpc_region }}"
+     state: present
+     tags:
+       Name: "{{ vpc_name }}-{{ item.item.sg_name }}"
+   with_items: "{{ db_sg.results }}"
+  
+ - name: DBServer | Create the DBServer Instance(s)
+   local_action:
+     module: ec2
+     region: "{{ vpc_region }}"
+     group: "{{ db_security_groups[0].sg_name }}"
+     keypair: "{{ key_name }}"
+     instance_type: "{{ db_instance_type }}"
+     image: "{{ ami_id }}"
+     vpc_subnet_id: "{{ vpc.subnets[0].id }}"
+     assign_public_ip: True
+     wait: True
+     wait_timeout: 600
+     count: "{{ db_instance_count }}"
+     instance_tags:
+       Name: "{{ vpc_name }}_DB_Instance"
+       Role: "{{ db_role }}"
+       Application: "{{ application }}"
+   register: db
+
+ - name: Instance Ids
+   debug: msg={{ item.id }}
+   with_items: "{{ db.instances }}"
+
+
+ - name: DBServer | Wait for SSH to come up
+   local_action: 
+     module: wait_for 
+     host: "{{ item.public_ip }}" 
+     port: 22
+     delay: 60
+     timeout: 320
+     state: started
+   with_items: 
+     - "{{ db.instances }}"
+

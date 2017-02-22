@@ -39,7 +39,9 @@
   command: "{{ '{{' }} script_tempdir.stdout {{ '}}' }}/{{ item.post_script }}"
   when: {{ item.run_post_script }} and inventory_hostname in groups['{{item.name}}'] 
 
-
+- name: Clean up temp directory
+  file: path="{{ '{{' }} script_tempdir.stdout {{ '}}' }}" state=absent
+  
 ###################
 
 {% endfor %}
